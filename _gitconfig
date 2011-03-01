@@ -1,0 +1,9 @@
+[user]
+        name = Aaron Levy
+        email = aaron@getpantheon.com
+[color]
+        diff = auto
+        status = auto
+        branch = auto
+        ui = auto
+
