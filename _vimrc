@@ -8,7 +8,7 @@ filetype plugin indent on
 set background=dark
 colorscheme ir_black
 syntax on
-"let python_highlight_all = 1
+let python_highlight_all = 1
 
 " General options
 set nocompatible           " Vim goodies
