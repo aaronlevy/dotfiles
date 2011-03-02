@@ -4,9 +4,11 @@ call pathogen#runtime_append_all_bundles()
 call pathogen#helptags()
 filetype plugin indent on
 
-" Syntax highlighting.
+" Colors / highlighting.
+set background=dark
+colorscheme ir_black
 syntax on
-let python_highlight_all = 1
+"let python_highlight_all = 1
 
 " General options
 set nocompatible           " Vim goodies
