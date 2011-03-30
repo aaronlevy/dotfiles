@@ -5,6 +5,7 @@ call pathogen#helptags()
 filetype plugin indent on
 
 " Colors / highlighting.
+set t_Co=256
 set background=dark
 colorscheme ir_black
 syntax on
