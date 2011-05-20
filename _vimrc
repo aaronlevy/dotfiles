@@ -7,9 +7,19 @@ filetype plugin indent on
 " Colors / highlighting.
 set t_Co=256
 set background=dark
-colorscheme ir_black
+colorscheme solarized
 syntax on
 let python_highlight_all = 1
+
+" Disable arrow keys.
+map <up> <nop>
+map <down> <nop>
+map <left> <nop>
+map <right> <nop>
+imap <up> <nop>
+imap <down> <nop>
+imap <left> <nop>
+imap <right> <nop>
 
 " General options
 set nocompatible           " Vim goodies
