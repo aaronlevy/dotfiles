@@ -5,11 +5,14 @@ call pathogen#helptags()
 filetype plugin indent on
 
 " Colors / highlighting.
-set t_Co=256
+syntax enable
+set t_Co=16
 set background=dark
+let g:solarized_visibility="high"  " Make whitespace more visible
+set listchars=tab:>-,trail:.       " Whitespace characters to highlight
+set list
+let python_highlight_all=1
 colorscheme solarized
-syntax on
-let python_highlight_all = 1
 
 " Disable arrow keys.
 map <up> <nop>
