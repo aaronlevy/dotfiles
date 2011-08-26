@@ -1,6 +1,7 @@
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
+alias vi='vim'
 
 # Tell tmux to use 256 colors
 alias tmux='tmux -2'
