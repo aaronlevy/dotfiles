@@ -1,9 +1,18 @@
 [user]
-        name = Aaron Levy
-        email = aaron@getpantheon.com
+  name = Aaron Levy
+  email = aaron@getpantheon.com
+
 [color]
-        diff = auto
-        status = auto
-        branch = auto
-        ui = auto
+  diff = auto
+  status = auto
+  branch = auto
+  ui = auto
+
+[core]
+  editor = vim
+
+[alias]
+  st = status -sb
+  fo = fetch origin
+  ff = pull --ff-only
 
