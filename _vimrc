@@ -48,9 +48,9 @@ autocmd FileType ruby setlocal shiftwidth=2 softtabstop=2
 
 " Searching
 set ignorecase             " Case insensitive search
+set smartcase              " Unless uppercase included in term
 set incsearch              " Incrementally search while typing
 set nohls                  " No highlight of searches
-set smartcase              " Unless uppercase included in term
 
 " Backup and swap
 set writebackup                    " Make backup of original when writing
