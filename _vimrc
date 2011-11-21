@@ -53,8 +53,9 @@ set incsearch              " Incrementally search while typing
 set nohls                  " No highlight of searches
 
 " Backup and swap
+set backup
 set writebackup                    " Make backup of original when writing
-set backupdir=~/.vim/tmp/backup//  " // will keep path in backup/swap name
+set backupdir=~/.vim/tmp/backup//  " Trailing // keeps full path in filename
 set directory=~/.vim/tmp/swap//
 
 " show a line at column 79
