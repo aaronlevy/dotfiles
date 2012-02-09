@@ -34,6 +34,7 @@ set modelines=5            " Look 5 lines in
 set showmatch              " Show matching paren.
 set scrolloff=3            " Keep 3 context lines above and below cursor
 set splitright splitbelow  " Split windows to right or below
+set nowrap                 " Do not wrap lines
 
 " Status
 set ruler                  " Show ruler
