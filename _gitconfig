@@ -16,3 +16,6 @@
   fo = fetch origin
   ff = pull --ff-only
 
+[web]
+  browser = google-chrome
+
