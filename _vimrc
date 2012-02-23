@@ -32,7 +32,9 @@ set nocompatible           " Vim goodies
 set modeline               " Use modelines
 set modelines=5            " Look 5 lines in
 set showmatch              " Show matching paren.
-set scrolloff=3            " Keep 3 context lines above and below cursor
+set scrolloff=5            " Keep 5 context lines above and below cursor
+set sidescrolloff=15       " Keep 15 context characters when sidescrolling
+set sidescroll=1           " Move one character at a time when sidescrolling
 set splitright splitbelow  " Split windows to right or below
 set nowrap                 " Do not wrap lines
 
