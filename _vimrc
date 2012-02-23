@@ -58,10 +58,15 @@ set smartcase              " Unless uppercase included in term
 set incsearch              " Incrementally search while typing
 set nohls                  " No highlight of searches
 
-" Backup and swap
-set backup
-set writebackup                    " Make backup of original when writing
-set backupdir=~/.vim/tmp/backup//  " Trailing // keeps full path in filename
+" Backup, swap, undo
+set undofile               " Undo across sessions
+set undolevels=200         " Keep 200 changes to be undone
+set backup                 " Backup current file
+set writebackup            " Make backup of original when writing
+
+" Backup, swap, undo directories. Trailing // keeps full path in filename
+set undodir=~/.vim/tmp/undo//
+set backupdir=~/.vim/tmp/backup//
 set directory=~/.vim/tmp/swap//
 
 " show a line at column 79
