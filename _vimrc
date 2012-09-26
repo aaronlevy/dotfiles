@@ -14,9 +14,6 @@ set list
 let python_highlight_all=1
 colorscheme solarized
 
-autocmd FileType python compiler pylint
-let g:pylint_onwrite = 0
-
 " Disable arrow keys.
 map <up> <nop>
 map <down> <nop>
