@@ -1,0 +1,6 @@
+# OS X will only source _bash_profile
+
+if [ -f ~/.bashrc ]; then
+    . ~/.bashrc
+fi
+

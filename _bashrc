@@ -9,8 +9,8 @@ HISTCONTROL=ignoredups:ignorespace
 shopt -s histappend
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=1000
-HISTFILESIZE=2000
+HISTSIZE=10000
+HISTFILESIZE=10000
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -22,11 +22,12 @@ shopt -s checkwinsize
 # Set prompt
 PS1='\u@\h:\w\$ '
 
-# Set TERM
-TERM=screen-256color
 
 # Debian Specific.
 if [ -e /etc/lsb-release ]; then
+
+    # Set TERM
+    TERM=screen-256color
 
     # set variable identifying the chroot you work in (used in the prompt below)
     if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
@@ -49,13 +50,25 @@ if [ -e /etc/lsb-release ]; then
     if [ -x /usr/bin/dircolors ]; then
         test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
     fi
-fi
 
-# Add handy aliases
-alias ls='ls --color=auto'
-alias grep='grep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias egrep='egrep --color=auto'
+    # Add handy aliases
+    alias ls='ls --color=auto'
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+
+    # enable programmable completion features (you don't need to enable
+    # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+    # sources /etc/bash.bashrc).
+    if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+        . /etc/bash_completion
+    fi
+
+elif [ -x /usr/sbin/system_profiler ]; then
+    # OS X
+    export LS_OPTIONS='--color=auto'
+    export CLICOLOR=true
+fi
 
 # virtualenvwrapper
 if [ -f /usr/local/bin/virtualenvwrapper.sh ]; then
@@ -67,12 +80,5 @@ fi
 # Alias definitions.
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
-fi
-
-# enable programmable completion features (you don't need to enable
-# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
-# sources /etc/bash.bashrc).
-if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
-    . /etc/bash_completion
 fi
 
