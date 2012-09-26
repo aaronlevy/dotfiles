@@ -6,13 +6,17 @@ filetype plugin indent on
 
 " Colors / highlighting.
 syntax enable
-set t_Co=16
+set t_Co=16                        " Set terminal to 16 colors
 set background=dark
 let g:solarized_visibility="high"  " Make whitespace more visible
 set listchars=tab:>-,trail:.       " Whitespace characters to highlight
 set list
 let python_highlight_all=1
 colorscheme solarized
+set colorcolumn=79                 " Display line at column 79
+set cursorline                     " Turn on cursor line
+autocmd InsertEnter * set nocul    " Turn off cursor line in insert mode
+autocmd InsertLeave * set cul
 
 " Disable arrow keys.
 map <up> <nop>
@@ -44,10 +48,10 @@ set laststatus=2           " Always show statusline
 " Indents
 set nosmartindent
 set expandtab
-set shiftwidth=4
-set softtabstop=4
-set tabstop=4
-autocmd FileType ruby setlocal shiftwidth=2 softtabstop=2
+set shiftwidth=2
+set softtabstop=2
+set tabstop=2
+autocmd FileType python setlocal shiftwidth=4 softtabstop=4 tabstop=4
 
 " Searching
 set ignorecase             " Case insensitive search
@@ -66,12 +70,10 @@ set undodir=~/.vim/tmp/undo//
 set backupdir=~/.vim/tmp/backup//
 set directory=~/.vim/tmp/swap//
 
-" show a line at column 79
-if exists("&colorcolumn")
-    set colorcolumn=79
-endif
-
 " <F2> Turn off autoindent while pasting.
 nnoremap <F2> :set invpaste paste?<CR>
 set pastetoggle=<F2>
+
+" <F5> Remove all trailing whitespace
+nnoremap <silent> <F5> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<CR>
 
