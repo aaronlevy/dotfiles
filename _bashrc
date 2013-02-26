@@ -50,6 +50,7 @@ if [ -e /etc/lsb-release ]; then
     if [ -x /usr/bin/dircolors ]; then
         test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
     fi
+    eval `dircolors ~/dotfiles/dircolors`
 
     # Add handy aliases
     alias ls='ls --color=auto'
