@@ -47,9 +47,6 @@ if [ -e /etc/lsb-release ]; then
     esac
 
     # enable color support of ls
-    if [ -x /usr/bin/dircolors ]; then
-        test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    fi
     eval `dircolors ~/dotfiles/dircolors`
 
     # Add handy aliases
