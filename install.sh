@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
-# Based on https://github.com/sontek/dotfiles/
 for i in _*
-do 
+do
     source="${PWD}/$i"
     target="${HOME}/${i/_/.}"
     if [ -e "${target}" -a ! -h ${target} ]; then
-        backup="${HOME}/.save.${i}"
+        backup="${HOME}/${i}.bak"
         echo "${target} already exists. Moving to ${backup}"
         mv ${target} ${backup}
     fi
