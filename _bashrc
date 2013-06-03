@@ -20,7 +20,7 @@ shopt -s checkwinsize
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
 # Set prompt
-PS1='\u@\h:\w\$ '
+PS1='\u@\H:\w\$ '
 
 
 # Debian Specific.
@@ -35,12 +35,12 @@ if [ -e /etc/lsb-release ]; then
     fi
 
     # Set prompt
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+    PS1='${debian_chroot:+($debian_chroot)}\u@\H:\w\$ '
 
     # If this is an xterm set the title to user@host:dir
     case "$TERM" in
     xterm*|rxvt*)
-        PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+        PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\H: \w\a\]$PS1"
         ;;
     *)
         ;;
