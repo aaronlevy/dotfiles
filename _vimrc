@@ -3,6 +3,7 @@ filetype off
 call pathogen#runtime_append_all_bundles()
 call pathogen#helptags()
 filetype plugin indent on
+set nocompatible
 
 " Colors / highlighting.
 syntax enable
@@ -29,7 +30,6 @@ imap <left> <nop>
 imap <right> <nop>
 
 " General options
-set nocompatible           " Vim goodies
 set modeline               " Use modelines
 set modelines=5            " Look 5 lines in
 set showmatch              " Show matching paren.
