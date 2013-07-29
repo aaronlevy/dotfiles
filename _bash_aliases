@@ -1,4 +1,4 @@
-if [[ $(uname -a) == 'Darwin' ]]; then
+if [[ $(uname -s) == 'Darwin' ]]; then
   # OSX does not support '--X' options
   alias ll='ls -ahlF'
 else
