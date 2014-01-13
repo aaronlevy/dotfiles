@@ -48,9 +48,9 @@ set laststatus=2           " Always show statusline
 " Indents
 set nosmartindent
 set expandtab
-set shiftwidth=2
-set softtabstop=2
-set tabstop=2
+set shiftwidth=4
+set softtabstop=4
+set tabstop=4
 autocmd FileType python setlocal shiftwidth=4 softtabstop=4 tabstop=4
 
 " Searching
