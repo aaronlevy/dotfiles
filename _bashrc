@@ -80,3 +80,6 @@ if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
 
+# vi style bindings
+set -o vi
+
