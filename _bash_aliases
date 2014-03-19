@@ -12,3 +12,29 @@ alias tmux='tmux -2'
 
 # Reset ssh-agent env vars in tmux sessions
 alias fixssh='eval $(tmux showenv | awk '\''/SSH_AUTH_SOCK|SSH_CONNECTION/ {split($0,v,"="); sshenv = sshenv v[1] "=\"" v[2] "\" "} END {print "export " sshenv}'\'') && ssh-add -l'
+
+# Python virtualenv helper
+VEHOME=$HOME/development/environments
+function workon {
+    typeset env_name="$1"
+
+    if [ "$env_name" = "" ]
+    then
+        return 1
+    fi
+
+    activate="$VEHOME/$env_name/bin/activate"
+    if [ ! -f "$activate" ]
+    then
+        echo "ERROR: Environment '$VEHOME/$env_name' does not contain an activate script." >&2
+        return 1
+    fi
+
+    # Deactivate existing
+    deactivate >/dev/null 2>&1
+
+    source "$activate"
+
+    return 0
+}
+alias workon=workon
