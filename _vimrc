@@ -50,6 +50,7 @@ set shiftwidth=4
 set softtabstop=4
 set tabstop=4
 autocmd FileType python setlocal shiftwidth=4 softtabstop=4 tabstop=4
+autocmd FileType go setlocal shiftwidth=4 softtabstop=4 tabstop=4 noexpandtab nolist
 
 " Searching
 set ignorecase             " Case insensitive search

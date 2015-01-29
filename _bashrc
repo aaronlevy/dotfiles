@@ -66,6 +66,7 @@ elif [ -x /usr/sbin/system_profiler ]; then
     # OS X
     export LS_OPTIONS='--color=auto'
     export CLICOLOR=true
+    export GREP_OPTIONS='--color=always'
 fi
 
 # Alias definitions.
