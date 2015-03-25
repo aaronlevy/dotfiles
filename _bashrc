@@ -22,6 +22,9 @@ shopt -s checkwinsize
 # Set prompt
 PS1='\u@\H:\w\$ '
 
+# Set go path
+export GOPATH=$HOME/dev/go
+export PATH=$PATH:$GOPATH/bin
 
 # Debian Specific.
 if [ -e /etc/lsb-release ]; then
