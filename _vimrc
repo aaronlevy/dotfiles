@@ -74,6 +74,9 @@ set directory=~/.vim/tmp/swap//
 nnoremap <F2> :set invpaste paste?<CR>
 set pastetoggle=<F2>
 
+" <F3> Toggle between tabs and spaces
+noremap <F3> :set invexpandtab expandtab?<CR>
+
 " <F5> Remove all trailing whitespace
 nnoremap <silent> <F5> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<CR>
 
