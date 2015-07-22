@@ -33,7 +33,7 @@ function gclone {
     if [ -z $repo ]; then
         exit 1
     fi
-    git clone $repo $GOPATH/src/$repo
+    git clone git@${repo/\//:} $GOPATH/src/$repo
     return $?
 }
 
