@@ -12,6 +12,9 @@ alias vi='vim'
 # Tell tmux to use 256 colors
 alias tmux='tmux -2'
 
+# Fast grep (fixed strings & ASCII chars)
+alias ffgrep='LC_ALL=C grep -F'
+
 # Reset ssh-agent env vars in tmux sessions
 alias fixssh='eval $(tmux showenv | awk '\''/SSH_AUTH_SOCK|SSH_CONNECTION/ {split($0,v,"="); sshenv = sshenv v[1] "=\"" v[2] "\" "} END {print "export " sshenv}'\'') && ssh-add -l'
 
