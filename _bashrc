@@ -19,8 +19,9 @@ shopt -s checkwinsize
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
-# Set prompt
-PS1='\u@\H:\w\$ '
+# Prompt with working dir
+#PS1='\u@\H:\w\$ '
+PS1='\u@\H:\$ '
 
 # Set go path
 export GOPATH=$HOME/dev/go
