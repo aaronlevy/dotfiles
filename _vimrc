@@ -79,7 +79,3 @@ noremap <F3> :set invexpandtab expandtab?<CR>
 
 " <F5> Remove all trailing whitespace
 nnoremap <silent> <F5> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<CR>
-
-" <F10> Run GoFmt
-noremap <F10> :call go#fmt#Format()<CR>
-
