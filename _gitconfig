@@ -16,6 +16,12 @@
   fo = fetch origin
   ff = pull --ff-only
 
+  # List branches sorted by last commit date
+  bd = for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(refname:short) (%(committerdate:relative))'
+
+  # Show diff ignoring 'vendor' directory
+  vdiff = "!f() { git diff $1 -- . ':!vendor'; }; f"
+
 [web]
   browser = google-chrome
 
