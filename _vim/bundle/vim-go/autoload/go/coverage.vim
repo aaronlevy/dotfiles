@@ -17,7 +17,7 @@ function! go#coverage#BufferToggle(bang, ...) abort
 endfunction
 
 " Buffer creates a new cover profile with 'go test -coverprofile' and changes
-" teh current buffers highlighting to show covered and uncovered sections of
+" the current buffers highlighting to show covered and uncovered sections of
 " the code. Calling it again reruns the tests and shows the last updated
 " coverage.
 function! go#coverage#Buffer(bang, ...) abort
@@ -34,7 +34,7 @@ function! go#coverage#Buffer(bang, ...) abort
   try
     execute cd . fnameescape(expand("%:p:h"))
     if empty(glob("*_test.go"))
-      call go#util#EchoError("no tests files available")
+      call go#util#EchoError("no test files available")
       return
     endif
   finally
@@ -44,11 +44,16 @@ function! go#coverage#Buffer(bang, ...) abort
   let s:toggle = 1
   let l:tmpname = tempname()
 
+  if get(g:, 'go_echo_command_info', 1)
+    echon "vim-go: " | echohl Identifier | echon "testing ..." | echohl None
+  endif
+
   if go#util#has_job()
     call s:coverage_job({
-          \ 'cmd': ['go', 'test', '-coverprofile', l:tmpname],
+          \ 'cmd': ['go', 'test', '-coverprofile', l:tmpname] + a:000,
           \ 'custom_cb': function('s:coverage_callback', [l:tmpname]),
           \ 'bang': a:bang,
+          \ 'for': 'GoTest',
           \ })
     return
   endif
@@ -64,7 +69,7 @@ function! go#coverage#Buffer(bang, ...) abort
     let g:go_term_enabled = 0
   endif
 
-  let id = call('go#cmd#Test', args)
+  let id = call('go#test#Test', args)
 
   if disabled_term
     let g:go_term_enabled = 1
@@ -85,19 +90,14 @@ endfunction
 
 " Clear clears and resets the buffer annotation matches
 function! go#coverage#Clear() abort
-  " only reset the syntax if the user has syntax enabled
-  if !empty(&syntax)
-    if exists("g:syntax_on") | syntax enable | endif
-  endif
+  call clearmatches()
 
   if exists("s:toggle") | let s:toggle = 0 | endif
 
-  " remove the autocmd we defined 
-  if exists("#BufWinLeave#<buffer>") 
-    autocmd! BufWinLeave <buffer>
-  endif
-
-  call clearmatches()
+  " remove the autocmd we defined
+  augroup vim-go-coverage
+    autocmd!
+  augroup end
 endfunction
 
 " Browser creates a new cover profile with 'go test -coverprofile' and opens
@@ -109,6 +109,7 @@ function! go#coverage#Browser(bang, ...) abort
           \ 'cmd': ['go', 'test', '-coverprofile', l:tmpname],
           \ 'custom_cb': function('s:coverage_browser_callback', [l:tmpname]),
           \ 'bang': a:bang,
+          \ 'for': 'GoTest',
           \ })
     return
   endif
@@ -118,7 +119,7 @@ function! go#coverage#Browser(bang, ...) abort
     call extend(args, a:000)
   endif
 
-  let id = call('go#cmd#Test', args)
+  let id = call('go#test#Test', args)
   if has('nvim')
     call go#jobcontrol#AddHandler(function('s:coverage_browser_handler'))
     let s:coverage_browser_handler_jobs[id] = l:tmpname
@@ -165,8 +166,8 @@ function! go#coverage#genmatch(cov) abort
   " example: foo.go:92.2,92.65 1 0
   if a:cov.startline == a:cov.endline
     call add(matches, {
-          \ 'group': color, 
-          \ 'pos': [[a:cov.startline, a:cov.startcol, a:cov.endcol - a:cov.startcol]], 
+          \ 'group': color,
+          \ 'pos': [[a:cov.startline, a:cov.startcol, a:cov.endcol - a:cov.startcol]],
           \ 'priority': 2,
           \ })
     return matches
@@ -176,8 +177,8 @@ function! go#coverage#genmatch(cov) abort
   " the line, we assume it is at maximum 200 bytes. I know this is hacky,
   " but that's only way of fixing the issue
   call add(matches, {
-        \ 'group': color, 
-        \ 'pos': [[a:cov.startline, a:cov.startcol, 200]], 
+        \ 'group': color,
+        \ 'pos': [[a:cov.startline, a:cov.startcol, 200]],
         \ 'priority': 2,
         \ })
 
@@ -186,16 +187,16 @@ function! go#coverage#genmatch(cov) abort
   while start_line < a:cov.endline
     let start_line += 1
     call add(matches, {
-          \ 'group': color, 
-          \ 'pos': [[start_line]], 
+          \ 'group': color,
+          \ 'pos': [[start_line]],
           \ 'priority': 2,
           \ })
   endwhile
 
   " finally end columns
   call add(matches, {
-        \ 'group': color, 
-        \ 'pos': [[a:cov.endline, a:cov.endcol-1]], 
+        \ 'group': color,
+        \ 'pos': [[a:cov.endline, a:cov.endcol-1]],
         \ 'priority': 2,
         \ })
 
@@ -217,7 +218,7 @@ function! go#coverage#overlay(file) abort
 
   " first mark all lines as goCoverageNormalText. We use a custom group to not
   " interfere with other buffers highlightings. Because the priority is
-  " lower than the cover and uncover matches, it'll be overriden.
+  " lower than the cover and uncover matches, it'll be overridden.
   let cnt = 1
   while cnt <= line('$')
     call add(matches, {'group': 'goCoverageNormalText', 'pos': [cnt], 'priority': 1})
@@ -256,10 +257,11 @@ function! go#coverage#overlay(file) abort
     call extend(matches, go#coverage#genmatch(cov))
   endfor
 
-  syntax manual
-
   " clear the matches if we leave the buffer
-  autocmd BufWinLeave <buffer> call go#coverage#Clear()
+  augroup vim-go-coverage
+    autocmd!
+    autocmd BufWinLeave <buffer> call go#coverage#Clear()
+  augroup end
 
   for m in matches
     call matchaddpos(m.group, m.pos)
@@ -275,7 +277,7 @@ function s:coverage_job(args)
   " autowrite is not enabled for jobs
   call go#cmd#autowrite()
 
-  let import_path =  go#package#ImportPath(expand('%:p:h'))
+  let status_dir =  expand('%:p:h')
   function! s:error_info_cb(job, exit_status, data) closure
     let status = {
           \ 'desc': 'last status',
@@ -287,20 +289,16 @@ function s:coverage_job(args)
       let status.state = "failed"
     endif
 
-    call go#statusline#Update(import_path, status)
+    call go#statusline#Update(status_dir, status)
   endfunction
 
-  let a:args.error_info_cb = function('s:error_info_cb')
+  let a:args.error_info_cb = funcref('s:error_info_cb')
   let callbacks = go#job#Spawn(a:args)
 
   let start_options = {
         \ 'callback': callbacks.callback,
-        \ 'close_cb': callbacks.close_cb,
+        \ 'exit_cb': callbacks.exit_cb,
         \ }
-
-  " modify GOPATH if needed
-  let old_gopath = $GOPATH
-  let $GOPATH = go#path#Detect()
 
   " pre start
   let dir = getcwd()
@@ -308,7 +306,7 @@ function s:coverage_job(args)
   let jobdir = fnameescape(expand("%:p:h"))
   execute cd . jobdir
 
-  call go#statusline#Update(import_path, {
+  call go#statusline#Update(status_dir, {
         \ 'desc': "current status",
         \ 'type': "coverage",
         \ 'state': "started",
@@ -318,7 +316,6 @@ function s:coverage_job(args)
 
   " post start
   execute cd . fnameescape(dir)
-  let $GOPATH = old_gopath
 endfunction
 
 " coverage_callback is called when the coverage execution is finished

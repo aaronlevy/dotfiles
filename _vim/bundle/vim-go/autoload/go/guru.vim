@@ -1,6 +1,6 @@
 "  guru.vim -- Vim integration for the Go guru.
 
-" guru_cmd returns a dict that contains the command to execute guru. option
+" guru_cmd returns a dict that contains the command to execute guru. args
 " is dict with following options:
 "  mode        : guru mode, such as 'implements'
 "  format      : output format, either 'plain' or 'json'
@@ -16,8 +16,7 @@ function! s:guru_cmd(args) range abort
   let selected = a:args.selected
 
   let result = {}
-  let dirname = expand('%:p:h')
-  let pkg = go#package#ImportPath(dirname)
+  let pkg = go#package#ImportPath()
 
   " this is important, check it!
   if pkg == -1 && needs_scope
@@ -25,7 +24,7 @@ function! s:guru_cmd(args) range abort
   endif
 
   "return with a warning if the binary doesn't exist
-  let bin_path = go#path#CheckBinPath("guru") 
+  let bin_path = go#path#CheckBinPath("guru")
   if empty(bin_path)
     return {'err': "bin path not found"}
   endif
@@ -34,24 +33,21 @@ function! s:guru_cmd(args) range abort
   let cmd = [bin_path]
 
   let filename = fnamemodify(expand("%"), ':p:gs?\\?/?')
-  let stdin_content = ""
   if &modified
-    let sep = go#util#LineEnding()
-    let content  = join(getline(1, '$'), sep )
-    let result.stdin_content = filename . "\n" . strlen(content) . "\n" . content
+    let result.stdin_content = go#util#archive()
     call add(cmd, "-modified")
   endif
 
   " enable outputting in json format
-  if format == "json" 
+  if format == "json"
     call add(cmd, "-json")
   endif
 
   " check for any tags
-  if exists('g:go_guru_tags')
-    let tags = get(g:, 'go_guru_tags')
+  if exists('g:go_build_tags')
+    let tags = get(g:, 'go_build_tags')
     call extend(cmd, ["-tags", tags])
-    call result.tags = tags
+    let result.tags = tags
   endif
 
   " some modes require scope to be defined (such as callers). For these we
@@ -115,30 +111,27 @@ function! s:sync_guru(args) abort
 
   if !has_key(a:args, 'disable_progress')
     if a:args.needs_scope
-      call go#util#EchoProgress("analysing with scope ". result.scope . " ...")
+      call go#util#EchoProgress("analysing with scope ". result.scope .
+            \ " (see ':help go-guru-scope' if this doesn't work)...")
     elseif a:args.mode !=# 'what'
       " the query might take time, let us give some feedback
       call go#util#EchoProgress("analysing ...")
     endif
   endif
 
-  let old_gopath = $GOPATH
-  let $GOPATH = go#path#Detect()
 
   " run, forrest run!!!
   let command = join(result.cmd, " ")
-  if &modified
+  if has_key(result, 'stdin_content')
     let out = go#util#System(command, result.stdin_content)
   else
     let out = go#util#System(command)
   endif
 
-  let $GOPATH = old_gopath
-
   if has_key(a:args, 'custom_parse')
     call a:args.custom_parse(go#util#ShellError(), out)
   else
-    call s:parse_guru_output(go#util#ShellError(), out)
+    call s:parse_guru_output(go#util#ShellError(), out, a:args.mode)
   endif
 
   return out
@@ -152,63 +145,63 @@ function! s:async_guru(args) abort
     return
   endif
 
-  let import_path =  go#package#ImportPath(expand('%:p:h'))
+  let status_dir =  expand('%:p:h')
   let statusline_type = printf("%s", a:args.mode)
 
   if !has_key(a:args, 'disable_progress')
     if a:args.needs_scope
-      call go#util#EchoProgress("analysing with scope ". result.scope . " ...")
+      call go#util#EchoProgress("analysing with scope " . result.scope .
+            \ " (see ':help go-guru-scope' if this doesn't work)...")
     endif
   endif
 
-  function! s:close_cb(chan) closure
-    let messages = []
-    while ch_status(a:chan, {'part': 'out'}) == 'buffered'
-      let msg = ch_read(a:chan, {'part': 'out'})
-      call add(messages, msg)
-    endwhile
+  let messages = []
+  function! s:callback(chan, msg) closure
+    call add(messages, a:msg)
+  endfunction
 
-    while ch_status(a:chan, {'part': 'err'}) == 'buffered'
-      let msg = ch_read(a:chan, {'part': 'err'})
-      call add(messages, msg)
-    endwhile
+  let status = {}
+  let exitval = 0
 
-    let l:job = ch_getjob(a:chan)
-    let l:info = job_info(l:job)
-
-    let out = join(messages, "\n")
-
+  function! s:exit_cb(job, exitval) closure
     let status = {
           \ 'desc': 'last status',
           \ 'type': statusline_type,
           \ 'state': "finished",
           \ }
 
-    if l:info.exitval
+    if a:exitval
+      let exitval = a:exitval
       let status.state = "failed"
     endif
 
-    call go#statusline#Update(import_path, status)
+    call go#statusline#Update(status_dir, status)
+  endfunction
+
+  function! s:close_cb(ch) closure
+    let out = join(messages, "\n")
 
     if has_key(a:args, 'custom_parse')
-      call a:args.custom_parse(l:info.exitval, out)
+      call a:args.custom_parse(exitval, out)
     else
-      call s:parse_guru_output(l:info.exitval, out)
+      call s:parse_guru_output(exitval, out, a:args.mode)
     endif
   endfunction
 
   let start_options = {
-        \ 'close_cb': function("s:close_cb"),
+        \ 'callback': funcref("s:callback"),
+        \ 'exit_cb': funcref("s:exit_cb"),
+        \ 'close_cb': funcref("s:close_cb"),
         \ }
 
-  if &modified
+  if has_key(result, 'stdin_content')
     let l:tmpname = tempname()
     call writefile(split(result.stdin_content, "\n"), l:tmpname, "b")
     let l:start_options.in_io = "file"
     let l:start_options.in_name = l:tmpname
   endif
 
-  call go#statusline#Update(import_path, {
+  call go#statusline#Update(status_dir, {
         \ 'desc': "current status",
         \ 'type': statusline_type,
         \ 'state': "analysing",
@@ -220,10 +213,12 @@ endfunc
 " run_guru runs the given guru argument
 function! s:run_guru(args) abort
   if go#util#has_job()
-    return s:async_guru(a:args)
+    let res = s:async_guru(a:args)
+  else
+    let res = s:sync_guru(a:args)
   endif
 
-  return s:sync_guru(a:args)
+  return res
 endfunction
 
 " Show 'implements' relation for selected package
@@ -272,7 +267,7 @@ endfunction
 function! go#guru#DescribeInfo() abort
   " json_encode() and friends are introduced with this patch (7.4.1304)
   " vim: https://groups.google.com/d/msg/vim_dev/vLupTNhQhZ8/cDGIk0JEDgAJ
-  " nvim: https://github.com/neovim/neovim/pull/4131        
+  " nvim: https://github.com/neovim/neovim/pull/4131
   if !exists("*json_decode")
     call go#util#EchoError("requires 'json_decode'. Update your Vim/Neovim version.")
     return
@@ -367,7 +362,7 @@ function! go#guru#DescribeInfo() abort
         \ 'mode': 'describe',
         \ 'format': 'json',
         \ 'selected': -1,
-        \ 'needs_scope': 1,
+        \ 'needs_scope': 0,
         \ 'custom_parse': function('s:info'),
         \ 'disable_progress': 1,
         \ }
@@ -467,7 +462,7 @@ function! go#guru#SameIds() abort
 
   " json_encode() and friends are introduced with this patch (7.4.1304)
   " vim: https://groups.google.com/d/msg/vim_dev/vLupTNhQhZ8/cDGIk0JEDgAJ
-  " nvim: https://github.com/neovim/neovim/pull/4131        
+  " nvim: https://github.com/neovim/neovim/pull/4131
   if !exists("*json_decode")
     call go#util#EchoError("GoSameIds requires 'json_decode'. Update your Vim/Neovim version.")
     return
@@ -530,28 +525,40 @@ function! s:same_ids_highlight(exit_val, output) abort
   if get(g:, "go_auto_sameids", 0)
     " re-apply SameIds at the current cursor position at the time the buffer
     " is redisplayed: e.g. :edit, :GoRename, etc.
-    autocmd BufWinEnter <buffer> nested call go#guru#SameIds()
+    augroup vim-go-sameids
+      autocmd!
+      autocmd BufWinEnter <buffer> nested call go#guru#SameIds()
+    augroup end
   endif
 endfunction
 
+" ClearSameIds returns 0 when it removes goSameId groups and non-zero if no
+" goSameId groups are found.
 function! go#guru#ClearSameIds() abort
+  let l:cleared = 0
+
   let m = getmatches()
   for item in m
     if item['group'] == 'goSameId'
       call matchdelete(item['id'])
+      let l:cleared = 1
     endif
   endfor
 
-  " remove the autocmds we defined
-  if exists("#BufWinEnter<buffer>")
-    autocmd! BufWinEnter <buffer>
+  if !l:cleared
+    return 1
   endif
+
+  " remove the autocmds we defined
+  augroup vim-go-sameids
+    autocmd!
+  augroup end
+
+  return 0
 endfunction
 
 function! go#guru#ToggleSameIds() abort
-  if len(getmatches()) != 0 
-    call go#guru#ClearSameIds()
-  else
+  if go#guru#ClearSameIds() != 0
     call go#guru#SameIds()
   endif
 endfunction
@@ -584,19 +591,18 @@ endfunction
 " We discard line2 and col2 for the first errorformat, because it's not
 " useful and location only has the ability to show one line and column
 " number
-function! s:parse_guru_output(exit_val, output) abort
+function! s:parse_guru_output(exit_val, output, title) abort
   if a:exit_val
     call go#util#EchoError(a:output)
     return
   endif
 
-  let old_errorformat = &errorformat
   let errformat = "%f:%l.%c-%[%^:]%#:\ %m,%f:%l:%c:\ %m"
-  call go#list#ParseFormat("locationlist", errformat, a:output)
-  let &errorformat = old_errorformat
+  let l:listtype = go#list#Type("_guru")
+  call go#list#ParseFormat(l:listtype, errformat, a:output, a:title)
 
-  let errors = go#list#Get("locationlist")
-  call go#list#Window("locationlist", len(errors))
+  let errors = go#list#Get(l:listtype)
+  call go#list#Window(l:listtype, len(errors))
 endfun
 
 function! go#guru#Scope(...) abort
@@ -616,26 +622,6 @@ function! go#guru#Scope(...) abort
     call go#util#EchoError("guru scope is not set")
   else
     call go#util#EchoSuccess("current guru scope: ". join(g:go_guru_scope, ","))
-  endif
-endfunction
-
-function! go#guru#Tags(...) abort
-  if a:0
-    if a:0 == 1 && a:1 == '""'
-      unlet g:go_guru_tags
-      call go#util#EchoSuccess("guru tags is cleared")
-    else
-      let g:go_guru_tags = a:1
-      call go#util#EchoSuccess("guru tags changed to: ". a:1)
-    endif
-
-    return
-  endif
-
-  if !exists('g:go_guru_tags')
-    call go#util#EchoSuccess("guru tags is not set")
-  else
-    call go#util#EchoSuccess("current guru tags: ". a:1)
   endif
 endfunction
 
