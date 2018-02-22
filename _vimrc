@@ -17,6 +17,9 @@ set cursorline                     " Turn on cursor line
 autocmd InsertEnter * set nocul    " Turn off cursor line in insert mode
 autocmd InsertLeave * set cul
 
+" Plugin options
+let g:rustfmt_autosave = 1
+
 " Disable arrow keys.
 map <up> <nop>
 map <down> <nop>
@@ -51,6 +54,7 @@ set softtabstop=4
 set tabstop=4
 autocmd FileType python setlocal shiftwidth=4 softtabstop=4 tabstop=4
 autocmd FileType go setlocal shiftwidth=4 softtabstop=4 tabstop=4 noexpandtab nolist
+autocmd FileType rust setlocal shiftwidth=4 softtabstop=4 tabstop=4 noexpandtab nolist
 autocmd FileType make setlocal shiftwidth=4 softtabstop=4 tabstop=4 noexpandtab nolist
 
 " Searching
