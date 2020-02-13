@@ -27,6 +27,12 @@ PS1='\u@\H:\$ '
 export GOPATH=$HOME/dev/go
 export PATH=$PATH:$GOPATH/bin
 
+# Path for some brew apps
+export PATH="/usr/local/sbin:$PATH"
+
+# Path for rust builds
+export PATH="$HOME/.cargo/bin:$PATH"
+
 # Debian Specific.
 if [ -e /etc/lsb-release ]; then
 
