@@ -18,16 +18,6 @@ autocmd InsertLeave * set cul
 " Plugin options
 let g:rustfmt_autosave = 1
 
-" Disable arrow keys.
-map <up> <nop>
-map <down> <nop>
-map <left> <nop>
-map <right> <nop>
-imap <up> <nop>
-imap <down> <nop>
-imap <left> <nop>
-imap <right> <nop>
-
 " General options
 set modeline                   " Use modelines
 set modelines=5                " Look 5 lines in
