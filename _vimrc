@@ -29,14 +29,15 @@ imap <left> <nop>
 imap <right> <nop>
 
 " General options
-set modeline               " Use modelines
-set modelines=5            " Look 5 lines in
-set showmatch              " Show matching paren.
-set scrolloff=5            " Keep 5 context lines above and below cursor
-set sidescrolloff=15       " Keep 15 context characters when sidescrolling
-set sidescroll=1           " Move one character at a time when sidescrolling
-set splitright splitbelow  " Split windows to right or below
-set nowrap                 " Do not wrap lines
+set modeline                   " Use modelines
+set modelines=5                " Look 5 lines in
+set showmatch                  " Show matching paren.
+set scrolloff=5                " Keep 5 context lines above and below cursor
+set sidescrolloff=15           " Keep 15 context characters when sidescrolling
+set sidescroll=1               " Move one character at a time when sidescrolling
+set splitright splitbelow      " Split windows to right or below
+set nowrap                     " Do not wrap lines
+set backspace=indent,eol,start " Make backspace behave normally
 
 " Status
 set ruler                  " Show ruler
