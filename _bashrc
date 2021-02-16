@@ -74,6 +74,7 @@ if [ -e /etc/lsb-release ]; then
 
 elif [ -x /usr/sbin/system_profiler ]; then
     # OS X
+    export BASH_SILENCE_DEPRECATION_WARNING=1
     export LS_OPTIONS='--color=auto'
     export CLICOLOR=true
     export GREP_OPTIONS='--color=always'
