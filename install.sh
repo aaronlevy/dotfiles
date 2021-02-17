@@ -10,3 +10,5 @@ do
     fi
     ln -snf ${source} ${target}
 done
+git submodule init
+git submodule update
