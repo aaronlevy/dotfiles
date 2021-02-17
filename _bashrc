@@ -23,7 +23,9 @@ shopt -s checkwinsize
 #PS1='\u@\H:\w\$ '
 PS1='\u@\H:\$ '
 
-# Set go path
+# Set paths
+export PATH=$PATH:/usr/local/bin
+export PATH=$PATH:/usr/local/go/bin
 export GOPATH=$HOME/dev/go
 export PATH=$PATH:$GOPATH/bin
 
