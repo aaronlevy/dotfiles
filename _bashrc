@@ -1,89 +1,34 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
-# don't put duplicate lines in the history. See bash(1) for more options
-# ... or force ignoredups and ignorespace
-HISTCONTROL=ignoredups:ignorespace
+# History
+shopt -s histappend # Append to history file, don't overwrite it
+HISTCONTROL=ignoredups:ignorespace # ignore space prefixed and duplicate lines
+HISTSIZE=100000
+HISTFILESIZE=100000
 
-# append to the history file, don't overwrite it
-shopt -s histappend
-
-# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=10000
-HISTFILESIZE=10000
-
-# check the window size after each command and, if necessary,
-# update the values of LINES and COLUMNS.
-shopt -s checkwinsize
-
-# make less more friendly for non-text input files, see lesspipe(1)
-[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
-
-# Prompt with working dir
-#PS1='\u@\H:\w\$ '
+# Prompt
 PS1='\u@\H:\$ '
 
-# Set paths
+# Paths
 export PATH=$PATH:/usr/local/bin
 export PATH=$PATH:/usr/local/go/bin
 export GOPATH=$HOME/dev/go
 export PATH=$PATH:$GOPATH/bin
+export PATH=/usr/local/sbin:$PATH # Some brew apps
+export PATH=$HOME/.cargo/bin:$PATH # Rust builds
 
-# Path for some brew apps
-export PATH="/usr/local/sbin:$PATH"
+# Aliases
+alias vi='vim'
+alias ll='ls -ahlF --group-directories-first'
+alias ffgrep='LC_ALL=C grep -F' # Fast grep (fixed strings & ASCII chars)
 
-# Path for rust builds
-export PATH="$HOME/.cargo/bin:$PATH"
-
-# Debian Specific.
-if [ -e /etc/lsb-release ]; then
-
-    # Set TERM
-    TERM=screen-256color
-
-    # set variable identifying the chroot you work in (used in the prompt below)
-    if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
-        debian_chroot=$(cat /etc/debian_chroot)
-    fi
-
-    # Set prompt
-    PS1='${debian_chroot:+($debian_chroot)}\u@\H:\w\$ '
-
-    # If this is an xterm set the title to user@host:dir
-    case "$TERM" in
-    xterm*|rxvt*)
-        PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\H: \w\a\]$PS1"
-        ;;
-    *)
-        ;;
-    esac
-
-    # enable color support of ls
-    eval `dircolors ~/dotfiles/dircolors`
-
-    # Add handy aliases
-    alias ls='ls --color=auto'
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
-
-    # enable programmable completion features (you don't need to enable
-    # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
-    # sources /etc/bash.bashrc).
-    if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
-        . /etc/bash_completion
-    fi
-
-elif [ -x /usr/sbin/system_profiler ]; then
-    # OS X
+# OS X
+if [[ $(uname -s) == 'Darwin' ]]; then
+    alias ll='ls -ahlF' # OSX does not support '--group-directories-first'
     export BASH_SILENCE_DEPRECATION_WARNING=1
     export LS_OPTIONS='--color=auto'
+    export LSCOLORS=GxFxCxDxBxegedabagaced
     export CLICOLOR=true
     export GREP_OPTIONS='--color=always'
 fi
-
-# Alias definitions.
-if [ -f $HOME/.bash_aliases ]; then
-    source $HOME/.bash_aliases
-fi
-
