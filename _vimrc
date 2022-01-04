@@ -8,7 +8,16 @@ set background=dark
 let g:solarized_visibility="high"  " Make whitespace more visible
 set listchars=tab:>-,trail:.       " Whitespace characters to highlight
 set list
+
+let g:go_highlight_types=1
+let g:go_highlight_fields=1
+let g:go_highlight_functions=1
+let g:go_highlight_function_calls=1
+let g:go_highlight_operators=1
+let g:go_highlight_extra_types=1
+let g:go_auto_type_info = 1
 let python_highlight_all=1
+
 colorscheme solarized
 set colorcolumn=79                 " Display line at column 79
 set cursorline                     " Turn on cursor line
@@ -43,6 +52,7 @@ set ruler                  " Show ruler
 set showcmd                " Show normal mode commands as typed
 set showmode               " Show current mode
 set laststatus=2           " Always show statusline
+set updatetime=100         " Update status delay in ms
 
 " Indents
 set nosmartindent
