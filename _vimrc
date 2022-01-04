@@ -28,6 +28,15 @@ set sidescroll=1               " Move one character at a time when sidescrolling
 set splitright splitbelow      " Split windows to right or below
 set nowrap                     " Do not wrap lines
 set backspace=indent,eol,start " Make backspace behave normally
+set wildmenu                   " Use wildmenu
+set wildmode=longest:full,full " Match longest common string, then full match
+
+" File browsing
+let g:netrw_liststyle = 3    " Tree view directory browser
+let g:netrw_banner = 0       " Remove help banner
+let g:netrw_browse_split = 3 " Open files in new tab
+let g:netrw_winsize = 20     " Split should take 20% of screen
+let g:netrw_altv = 1         " Left split
 
 " Status
 set ruler                  " Show ruler
@@ -63,12 +72,29 @@ set undodir=~/.vim/tmp/undo//
 set backupdir=~/.vim/tmp/backup//
 set directory=~/.vim/tmp/swap//
 
-" <F2> Turn off autoindent while pasting.
-nnoremap <F2> :set invpaste paste?<CR>
-set pastetoggle=<F2>
+" Leader-e: Open file explorer in same directory as current file
+nnoremap <silent> <leader>e :call LexploreToggle()<cr>
+let g:lexplore_open = 0
+function! LexploreToggle()
+    if g:lexplore_open
+        Lexplore
+        let g:lexplore_open = 0
+    else
+        Lexplore %:p:h
+        let g:lexplore_open = 1
+    endif
+endfunction
+
+" Leader-p: Turn off autoindent while pasting.
+nnoremap <silent> <leader>p :set invpaste paste?<CR>
+set pastetoggle=<leader>p
 
 " <F3> Toggle between tabs and spaces
 noremap <F3> :set invexpandtab expandtab?<CR>
 
 " <F5> Remove all trailing whitespace
 nnoremap <silent> <F5> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<CR>
+
+" Leader-[]: Move through tabs
+nnoremap <silent> <leader>] :tabn<cr>
+nnoremap <silent> <leader>[ :tabp<cr>
