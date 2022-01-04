@@ -1,3 +1,6 @@
+selection:
+  save_to_clipboard: true # Copy highlighted selections
+
 colors:
   # Default colors
   primary:
