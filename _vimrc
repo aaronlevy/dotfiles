@@ -41,11 +41,11 @@ set wildmenu                   " Use wildmenu
 set wildmode=longest:full,full " Match longest common string, then full match
 
 " File browsing
-let g:netrw_liststyle = 3    " Tree view directory browser
+let g:netrw_liststyle = 1    " Long listing style, but toggles to tree view with Lexplore
 let g:netrw_banner = 0       " Remove help banner
-let g:netrw_browse_split = 3 " Open files in new tab
 let g:netrw_winsize = 20     " Split should take 20% of screen
 let g:netrw_altv = 1         " Left split
+let g:netrw_browse_split = 0 " Default to same window, but toggles to new tab with Lexplore
 
 " Status
 set ruler                  " Show ruler
@@ -88,8 +88,13 @@ let g:lexplore_open = 0
 function! LexploreToggle()
     if g:lexplore_open
         Lexplore
+        " Reset closer to defaults when Lexplore not being used.
+        let g:netrw_liststyle = 1    " Long listing style
+        let g:netrw_browse_split = 0 " Open files in same window.
         let g:lexplore_open = 0
     else
+        let g:netrw_liststyle = 3    " Tree view
+        let g:netrw_browse_split = 3 " Open files in new tab.
         Lexplore %:p:h
         let g:lexplore_open = 1
     endif
