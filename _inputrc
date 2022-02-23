@@ -1,6 +1,11 @@
 set bell-style none
 set editing-mode vi
 
+# Change prompt when in command mode
+set show-mode-in-prompt on
+set vi-cmd-mode-string "CMD "
+set vi-ins-mode-string ""
+
 $if mode=vi
   #set keymap vi-command
   #"gg": beginning-of-history
