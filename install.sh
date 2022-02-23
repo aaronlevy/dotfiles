@@ -13,3 +13,6 @@ done
 git submodule init
 git submodule update
 # vim -c 'GoInstallBinaries|q'
+
+
+# vim -c 'CocInstall -sync coc-tsserver coc-json|q'
