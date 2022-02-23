@@ -21,6 +21,10 @@ let python_highlight_all=1
 colorscheme solarized
 set colorcolumn=79                 " Display line at column 79
 set cursorline                     " Turn on cursor line
+set cursorlineopt=line             " Don't highlight number column
+set number                         " Show line numbers
+set signcolumn=number              " Show signs in the line number column
+set switchbuf+=usetab,newtab       " Quickfix / locationlist should open in tabs
 autocmd InsertEnter * set nocul    " Turn off cursor line in insert mode
 autocmd InsertLeave * set cul
 
@@ -81,6 +85,8 @@ set writebackup            " Make backup of original when writing
 set undodir=~/.vim/tmp/undo//
 set backupdir=~/.vim/tmp/backup//
 set directory=~/.vim/tmp/swap//
+
+" Key Mappings
 
 " Leader-e: Open file explorer in same directory as current file
 nnoremap <silent> <leader>e :call LexploreToggle()<cr>
