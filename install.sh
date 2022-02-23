@@ -12,3 +12,4 @@ do
 done
 git submodule init
 git submodule update
+# vim -c 'GoInstallBinaries|q'

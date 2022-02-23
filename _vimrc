@@ -1,4 +1,5 @@
 set nocompatible
+set encoding=utf-8
 syntax on
 filetype plugin indent on
 
@@ -19,6 +20,7 @@ let g:go_auto_type_info = 1
 let python_highlight_all=1
 
 colorscheme solarized
+"set mouse=a                        " I've finally broken
 set colorcolumn=79                 " Display line at column 79
 set cursorline                     " Turn on cursor line
 set cursorlineopt=line             " Don't highlight number column
@@ -119,3 +121,33 @@ nnoremap <silent> <F5> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<CR>
 " Leader-[]: Move through tabs
 nnoremap <silent> <leader>] :tabn<cr>
 nnoremap <silent> <leader>[ :tabp<cr>
+
+" CoC Plugin
+
+" Use tab for auto-complete
+inoremap <silent><expr> <TAB>
+    \ pumvisible() ? "\<C-n>" :
+    \ <SID>check_back_space() ? "\<TAB>" :
+    \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Only enable coc for certain filetypes
+" let g:coc_filetypes_enable = [ 'typescriptreact', 'javascriptreact']
+
+"function! s:disable_coc_for_type()
+"  if index(g:coc_filetypes_enable, &filetype) == -1
+"    :silent! CocDisable
+"  else
+"    :silent! CocEnable
+"  endif
+"endfunction
+"
+"augroup CocGroup
+" autocmd!
+" autocmd BufNew,BufEnter,BufAdd,BufCreate * call s:disable_coc_for_type()
+"augroup end
