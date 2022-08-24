@@ -62,10 +62,11 @@ set updatetime=100         " Update status delay in ms
 
 " Indents
 set nosmartindent
-set expandtab
-set shiftwidth=4
-set softtabstop=4
-set tabstop=4
+set expandtab              " Convert tabs to spaces
+set shiftwidth=4           " Shift indent using 4 spaces
+set tabstop=4              " Indent using 4 spaces
+set softtabstop=4          " Move cursor 4 spaces on tab
+set shiftround             " Round shifted indentation to the nearest multiple of shiftwidth
 autocmd FileType python setlocal shiftwidth=4 softtabstop=4 tabstop=4
 autocmd FileType go setlocal shiftwidth=4 softtabstop=4 tabstop=4 noexpandtab nolist
 autocmd FileType rust setlocal shiftwidth=4 softtabstop=4 tabstop=4 noexpandtab nolist
