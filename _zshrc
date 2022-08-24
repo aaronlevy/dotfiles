@@ -1,0 +1,20 @@
+export PATH=$PATH:/usr/local/bin
+export PATH=$PATH:/usr/local/go/bin
+export GOPATH=$HOME/dev/go
+export PATH=$PATH:$GOPATH/bin
+export PATH=/usr/local/sbin:$PATH # Some brew apps
+export PATH=$HOME/.cargo/bin:$PATH # Rust builds
+export PATH=$HOME/bin:$PATH
+
+alias vi='vim'
+alias ls='ls --color=auto'
+alias ll='ls -ahlF --group-directories-first'
+alias grep='grep --color=auto'
+alias ffgrep='LC_ALL=C grep -F' # Fast grep (fixed strings & ASCII chars)
+
+# OS X
+if [[ $(uname -s) == 'Darwin' ]]; then
+    alias ll='ls -ahlF' # OSX does not support '--group-directories-first'
+fi
+
+eval "$(/opt/homebrew/bin/brew shellenv)"
